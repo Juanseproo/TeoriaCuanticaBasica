@@ -28,6 +28,13 @@ def Producto_int_2_vectores(A, B):
         print("Deben tener ambos la misma longuitud")
         sys.exit()
     return sum(v1 * v2 for v1, v2 in zip(A, B))
+    
+def conjugar_vector(vector):
+    """
+    Conjunga un vector dado
+    """
+    conjugar = [complex(x.real, -x.imag) for x in vector]
+    return conjugar
 
 def Cal_Prob_Posi_Doble(vector1, vector2):
     """
@@ -35,7 +42,9 @@ def Cal_Prob_Posi_Doble(vector1, vector2):
     """
     if not len(vector1) == len(vector2):
         sys.exit()
+    vector2 = conjugar_vector(vector2)
     N_vector1, N_vector2 = normalizar_vector(vector1), normalizar_vector(vector2)
+    
     for i in range(len(vector1)):
         vector1[i], vector2[i] = vector1[i]/N_vector1, vector2[i]/N_vector2
     result = Producto_int_2_vectores(vector1, vector2)
