@@ -34,6 +34,10 @@ El sistema consiste en una partícula confinada a un conjunto discreto de posici
 
 El sistema debe calcular la probabilidad de encontrarlo en una posición en particular.
 
+### `Cal_Prob_Posi_Doble()`
+
+El sistema si se le da otro vector Ket debe buscar la probabilidad de transitar del primer vector al segundo.
+
 ### Licencia
 
 Este proyecto está autorizado bajo la licencia MIT; consulte el archivo LICENSE.md para obtener más información.
