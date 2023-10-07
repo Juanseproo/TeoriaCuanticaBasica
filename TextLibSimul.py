@@ -1,5 +1,7 @@
 import Simulaciones as c
 import unittest
+import math
+import numpy as np
 class TestSimulaciones(unittest.TestCase):
 
     def test_Cal_Prob_Posi(self):
@@ -19,6 +21,12 @@ class TestSimulaciones(unittest.TestCase):
         self.assertAlmostEqual(amplitud_de_transicion, (-0.9999999999999998j))
         amplitud_de_transicion = c.amplitud_de_transicion([2j, 5], [2, -1j])
         self.assertAlmostEqual(amplitud_de_transicion, (-0.7474093186836597j))
+
+    def test_varianza_del_observable(self):
+        varianza_del_observable = c.varianza_del_observable(np.array([[1, -1j], [1j, 2]], dtype=complex), np.array([math.sqrt(2)/2, math.sqrt(2)*1j/2], dtype=complex))
+        self.assertAlmostEqual(varianza_del_observable, (-3.7500000000000013))
+        varianza_del_observable = c.varianza_del_observable(np.array([[2, -1j], [1j, 2]], dtype=complex), np.array([math.sqrt(2)/2, math.sqrt(2)*1j/2], dtype=complex))
+        self.assertAlmostEqual(varianza_del_observable, (-5.000000000000003))
 
 if __name__ == "__main__":
     unittest.main()
