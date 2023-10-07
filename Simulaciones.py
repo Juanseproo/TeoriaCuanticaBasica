@@ -1,5 +1,17 @@
 import math
 import sys
+import numpy as np
+
+def accion_de_una_matriz(matriz, vector):
+    """
+    Función para calcular la "acción" de una matriz sobre un vector.
+    """
+    if len(matriz[0]) != len(vector):
+        print("El número de columnas de la matriz debe ser igual a la longitud del vector.")
+        sys.exit()
+    result = [sum(matriz[i][j] * vector[j] for j in range(len(vector))) for i in range(len(matriz))]
+    return result    
+
 def normalizar_vector(vector, suma = 0):
     """
     Normaliza un vector dado
@@ -50,11 +62,26 @@ def Cal_Prob_Posi_Doble(vector1, vector2):
     result = Producto_int_2_vectores(vector1, vector2)
     return result
 
-def amplitud_de_transicion(vector1, vector2):
+def amplitud_de_transicion(φ, ψ):
     """
     Amplitud de transición. El sistema puede recibir dos vectores y calcular la probabilidad de transitar de el uno al otro después de hacer la observación
+    φ = Vector complejo
+    ψ = Vector complejo
     """
-    numerador = Producto_int_2_vectores(conjugar_vector(vector1), vector2)
-    denominador = normalizar_vector(vector1) * normalizar_vector(vector2)
+    numerador = Producto_int_2_vectores(conjugar_vector(φ), ψ)
+    denominador = normalizar_vector(φ) * normalizar_vector(ψ)
     result = numerador/denominador
     return result
+
+def varianza_del_observable(φ, ψ):
+    """
+    Ahora con una matriz que describa un observable y un vector ket, el sistema revisa que la matriz sea hermitiana, y si lo es, calcula la media y la varianza del observable en el estado dado.
+    φ = Matriz compleja
+    ψ = Vector complejo
+    """
+    hermitiana = np.allclose(φ, φ.conj().T)
+    if hermitiana == False:
+        sys.exit()
+    media = np.dot(ψ.conj().T, np.dot(φ, ψ)).real
+    varianza = np.dot(ψ.conj().T, np.dot(φ**2, ψ)).real - media**2
+    return varianza
