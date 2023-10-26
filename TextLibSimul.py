@@ -1,200 +1,55 @@
+import Simulaciones as c
+import unittest
 import math
-import sys
-import numpy as np
-#Juan Sebastian Buitrago Piñeros CNYT
-def adicion(matriz1, matriz2):
-    """
-    Adición de matrices complejas.
-    (list(2d), list(2d)) -> list(2d)
-    """
-    if len(matriz1) != len(matriz2) or len(matriz1[0]) != len(matriz2[0]):
-        raise ValueError("Las matrices no tienen las mismas dimensiones y no se pueden sumar")
-    return [[matriz1[i][j] + matriz2[i][j] for j in range(len(matriz1[0]))] for i in range(len(matriz1))]
+class TestSimulaciones(unittest.TestCase):
 
-def matriz_I(n, x):
-    """
-    Da una matriz identidad con filas y columnas n y valor de diagonal x
-    (int, int) -> list(2d)
-    """
-    matriz = []
-    for i in range(n):
-        fila = []
-        for j in range(n):
-            if i == j:
-                fila.append(x)
-            else:
-                fila.append(0)
-        matriz.append(fila)
-    return matriz
+    def test_Cal_Prob_Posi(self):
+        Cal_Prob_Posi = c.Cal_Prob_Posi([-3-1j, -2j, 1j, 2], 2)
+        self.assertAlmostEqual(Cal_Prob_Posi, 5.263157894736841)
+        Cal_Prob_Posi = c.Cal_Prob_Posi([2+1j, -1+2j, 1j, 1, 3-1j, 2, -2j, -2+1j, 1-3j, -1j], 7)
+        self.assertAlmostEqual(Cal_Prob_Posi, 10.869565217391303) 
+    
+    def test_Cal_Prob_Posi_Doble(self):
+        Cal_Prob_Posi_Doble = c.Cal_Prob_Posi_Doble([2+1j, -1+2j, 1j, 1, 3-1j, 2, -2j, -2+1j, 1-3j, -1j], [-3-1j, -2j, 1j, 2, -3-1j, -3-1j, -3-1j, -3-1j, -3-1j, -3-1j])
+        self.assertAlmostEqual(Cal_Prob_Posi_Doble, (557.0))
+        Cal_Prob_Posi_Doble = c.Cal_Prob_Posi_Doble([1j, -1+2j, 1j, 1, 3-1j, 2, -2j, -2+1j, 1-3j, -1j], [-1-4j, 2-3j, -7+6j, -1+1j, -5-3j, 5, 5+8j, 4-4j, -8-7j, -2-7j])
+        self.assertAlmostEqual(Cal_Prob_Posi_Doble, (914.0000000000001))
 
-def hermitiana(matriz):
-    """
-    Comprueba si la matriz es igual a su traspuesta conjugada
-    list2d -> bool
-    """
-    return np.allclose(matriz, np.conj(matriz.T))
+    def test_Cal_Prob_Posi_Doble_Normalizada(self):
+        Cal_Prob_Posi_Doble_Normalizada = c.Cal_Prob_Posi_Doble_Normalizada([2+1j, -1+2j, 1j, 1, 3-1j, 2, -2j, -2+1j, 1-3j, -1j], [-3-1j, -2j, 1j, 2, -3-1j, -3-1j, -3-1j, -3-1j, -3-1j, -3-1j])
+        self.assertAlmostEqual(Cal_Prob_Posi_Doble_Normalizada, (0.15327462850853055))
+        Cal_Prob_Posi_Doble_Normalizada = c.Cal_Prob_Posi_Doble_Normalizada([1j, -1+2j, 1j, 1, 3-1j, 2, -2j, -2+1j, 1-3j, -1j], [-1-4j, 2-3j, -7+6j, -1+1j, -5-3j, 5, 5+8j, 4-4j, -8-7j, -2-7j])
+        self.assertAlmostEqual(Cal_Prob_Posi_Doble_Normalizada, (0.04700195412938395))
 
-def accion(matriz, vector):
-    """
-    Función para calcular la "acción" de una matriz sobre un vector.
-    (list(2d), list) -> list
-    """
-    if len(matriz[0]) != len(vector):
-        print("El número de columnas de la matriz debe ser igual a la longitud del vector.")
-        sys.exit()
-    result = [sum(matriz[i][j] * vector[j] for j in range(len(vector))) for i in range(len(matriz))]
-    return result 
+    def test_amplitud_de_transicion(self):
+        amplitud_de_transicion = c.amplitud_de_transicion([1j, 1], [1, -1j])
+        self.assertAlmostEqual(amplitud_de_transicion, (-2j))
+        amplitud_de_transicion = c.amplitud_de_transicion([2j, 5], [2, -1j])
+        self.assertAlmostEqual(amplitud_de_transicion, (-9j))
 
-def normalizar(vector, suma = 0):
-    """
-    Normaliza un vector dado
-    (list, int) -> int
-    """
-    for i in range(len(vector)):
-        suma += vector[i].real**2 + vector[i].imag**2
-    result = math.sqrt(suma)
-    return result
+    def test_amplitud_de_transicion_normalizada(self):
+        amplitud_de_transicion_normalizada = c.amplitud_de_transicion_normalizada([1j, 1], [1, -1j])
+        self.assertAlmostEqual(amplitud_de_transicion_normalizada, (-0.9999999999999998j))
+        amplitud_de_transicion_normalizada = c.amplitud_de_transicion_normalizada([2j, 5], [2, -1j])
+        self.assertAlmostEqual(amplitud_de_transicion_normalizada, (-0.7474093186836597j))
 
-def PInterno(A, B):
-    """
-    Producto interno de dos vectores
-    (list, list) -> int
-    """
-    if len(A) != len(B):
-        print("Deben tener ambos la misma longuitud")
-        sys.exit()
-    return sum(v1 * v2 for v1, v2 in zip(A, B))
+    def test_varianza_y_media_del_observable(self):
+        varianza_y_media_del_observable = c.varianza_y_media_del_observable(([[0, -1j], [1j, 0]]), [1/math.sqrt(2), 1j/math.sqrt(2)])
+        self.assertAlmostEqual(varianza_y_media_del_observable, ((1, 0j)))
+        varianza_y_media_del_observable = c.varianza_y_media_del_observable(([[0, 1j], [-1j, 0]]), [1/math.sqrt(2), 1j/math.sqrt(2)])
+        self.assertAlmostEqual(varianza_y_media_del_observable, ((-1, 0j)))
+    
+    def test_valores_vectores(self):
+        valores_vectores = c.valores_vectores([[1, -1j], [1j, 1]])
+        self.assertAlmostEqual(valores_vectores, (([(1.9999999999999991+0j), 0j], [[(-0-0.7071067811865474j), (0.7071067811865476+0j)], [(0.7071067811865476+0j), -0.7071067811865474j]])))
+        valores_vectores = c.valores_vectores([[-1, -1j], [1j, 1]])
+        self.assertAlmostEqual(valores_vectores, (([(-1.414213562373095+0j), (1.4142135623730951+0j)], [[(0.9238795325112867+0j), (-0-0.3826834323650897j)], [(-0-0.3826834323650898j), (0.9238795325112867+0j)]])))
 
-def conjugar_vector(vector):
-    """
-    Conjunga un vector dado
-    list -> list
-    """
-    conjugar = [complex(x.real, -x.imag) for x in vector]
-    return conjugar
+    def test_probabilidades_vectores(self):
+        probabilidades_vectores = c.probabilidades_vectores([1/math.sqrt(2), 1j/math.sqrt(2)], [[0, -1j], [1j, 0]], 1)
+        self.assertAlmostEqual(probabilidades_vectores, ((1.1102230246251565e-16+0j)))
+        probabilidades_vectores = c.probabilidades_vectores([1/math.sqrt(2), 1j/math.sqrt(2)], [[0, 1j], [1j, 0]], 1)
+        self.assertAlmostEqual(probabilidades_vectores, ((0.4999999999999998+0.4999999999999999j)))
 
-def Cal_Prob_Posi(Φ, posicion, denominador = 0):
-    """
-    El sistema debe calcular la probabilidad de encontrarlo en una posición en particular.
-    Φ = Vector complejo
-    (list, int, int) -> float 
-    (cj)/||Φ⟩|²
-    """
-    for i in range(len(Φ)):
-        denominador += math.sqrt(Φ[i].real**2 + Φ[i].imag**2)**2
-    denominador, numerador = math.sqrt(denominador), Φ[posicion]
-    result = (math.sqrt(numerador.real**2 + numerador.imag**2)**2/denominador**2)*100
-    return result
-
-def Cal_Prob_Posi_Doble(Φ, Ψ):
-    """
-    El sistema si se le da otro vector Ket debe buscar la probabilidad de transitar del primer vector al segundo. |Φ> --> |Ψ>
-    Φ = Vector complejo (Inicial)
-    Ψ = Vector complejo (Final)
-    (list, list) --> float
-    |⟨φ|ψ⟩|²
-    """
-    if not len(Φ) == len(Ψ):
-        raise ValueError("Los vectores deben tener la misma longitud para calcular la probabilidad de transición.")
-    bra_Ψ = conjugar_vector(Ψ)
-    result = abs(PInterno(bra_Ψ, Φ))**2
-    return result
-
-def Cal_Prob_Posi_Doble_Normalizada(Φ, Ψ):
-    """
-    El sistema si se le da otro vector Ket debe buscar la probabilidad de transitar del primer vector al segundo, pero el resultado esta entre 0 y 1 |Φ> --> |Ψ> 
-    Φ = Vector complejo (Inicial)
-    Ψ = Vector complejo (Final)
-    (list, list) --> float
-    |⟨φ|ψ⟩|² / (||φ⟩|²*||ψ⟩|²)
-    """
-    numerador, denominador = Cal_Prob_Posi_Doble(Φ, Ψ), normalizar(Φ)**2 * normalizar(Ψ)**2
-    return numerador/denominador
-
-def amplitud_de_transicion(φ, ψ):
-    """
-    Amplitud de transición. El sisxtema puede recibir dos vectores y calcular la probabilidad de transitar de el uno al otro después de hacer la observación
-    φ = Vector complejo (Inicial)
-    ψ = Vector complejo (Final)
-    (list, list) --> float
-    ⟨φ|ψ⟩
-    """
-    bra_φ = conjugar_vector(φ)
-    numerador = PInterno(bra_φ, ψ)
-    return numerador
-
-def amplitud_de_transicion_normalizada(φ, ψ):
-    """
-    Amplitud de transición. El sistema puede recibir dos vectores y calcular la probabilidad de transitar de el uno al otro después de hacer la observación, pero el resultado esta entre 0 y 1
-    φ = Vector complejo (Inicial)
-    ψ = Vector complejo (Final)
-    (list, list) --> float
-    ⟨φ|ψ⟩ / ∣∣φ⟩∣⋅∣∣ψ⟩∣
-    """
-    numerador = amplitud_de_transicion(φ, ψ)
-    denominador = normalizar(φ) * normalizar(ψ)
-    return numerador/denominador
-
-def varianza_y_media_del_observable(Ω, ψ):
-    """
-    Ahora con una matriz que describa un observable y un vector ket, el sistema revisa que la matriz sea hermitiana, y si lo es, calcula 
-    la media y la varianza del observable en el estado dado.
-    Ω = Matriz compleja
-    ψ = Vector complejo
-    (list(2d), list(2d)) -> (int, int)
-    """
-    if hermitiana(np.array(Ω)) == False:
-        sys.exit()
-    bra_ψ = conjugar_vector(ψ)
-    media = PInterno(bra_ψ, accion(Ω, ψ))
-    var = PInterno(bra_ψ, accion(adicion(Ω,  matriz_I(len(Ω), -round(media.real))), ψ))
-    return round(media.real), var
-
-def valores_vectores(Ω):
-    """
-    Calcula los valores propios y los vectores propios de una matriz compleja.
-    Ω = Matriz compleja
-    list(2d) -> valoresprops, vectores
-    """
-    valores, vectores = np.linalg.eig(Ω)
-    lista_valores = [val for val in valores]
-    lista_vectores = [[v for v in vector] for vector in vectores]
-    return lista_valores, lista_vectores
-
-def probabilidades_vectores(inicial, observable, posicion):
-    """
-    La probabilidad de que el sistema transite a alguno de los vectores propios después de la observación.
-    (list, list(2d), int) -> float
-    """
-    vectores = valores_vectores(observable)[1]
-    return amplitud_de_transicion(inicial, vectores[posicion])
-
-
-"""
-----------------------------------------------------------------------------------------
-# Ejercicio 4.3.1
-----------------------------------------------------------------------------------------
-# Vector inicial :
-
-v = [[1, 0], [0, 0]]
-
-observable = [[0, 0, 1, 0], [1, 0, 0, 0]]
-
-vr = accion(observable, v)
-
-valores, vectores = valores_vectores(observable)
-
-print("El resultado de la observacion es: ", vr)
-
-print("Los valores propios son: ", valores, "y sus vectores propios son: ", vectores, ")
-----------------------------------------------------------------------------------------
-# Ejercicio 4.3.2
-----------------------------------------------------------------------------------------
-# prob = probabilidades_vectores(vr, observable, 1)
-----------------------------------------------------------------------------------------
-# Excercise 4.4.1
-----------------------------------------------------------------------------------------
-v1 = [[0, 0, 1, 0], [1, 0, 0, 0]]
-v2 = [[math.sqrt(2)/2, math.sqrt(2)/2], [math.sqrt(2)/2, -math.sqrt(2)/2, 0)]]
-
-"""
+if __name__ == "__main__":
+    unittest.main()
